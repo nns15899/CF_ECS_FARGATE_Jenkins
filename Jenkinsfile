@@ -6,7 +6,7 @@ node() {
 	    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'ECS_FARGATE', secretKeyVariable: 'ACCESS_KEY']]) {
     		docker.withTool('myDocker') {
 		    //Buidling a docker images based on the dockerfile
-                sh "sudo dockerd"
+                sh "systemctl start docker"
     		    sh "docker build -t awscli ."
                     //Validating the CF template with cfn-lint and container will be created & validate
     		    sh "docker run --rm awscli cfn-lint New_ECS_Fargate_Para.yml"

@@ -54,7 +54,7 @@ Resources:
             LogDriver: awslogs
             Options:
               awslogs-group: /ecs/MyJfrog_Task
-              awslogs-region: us-east-1
+              awslogs-region: ap-south-1
               awslogs-stream-prefix: ecs
           PortMappings:
             - HostPort: !Ref HostPort
@@ -87,6 +87,6 @@ Resources:
       LaunchType: FARGATE
       TaskDefinition: !Ref taskdefinition
       LoadBalancers:
-        - TargetGroupArn: arn:aws:elasticloadbalancing:us-east-1:xxxxxxxxxxxx:targetgroup/jfrog-cluster/xxxxxxxxxxxxxxxx
+        - TargetGroupArn: arn:aws:elasticloadbalancing:ap-south-1:xxxxxxxxxxxx:targetgroup/jfrog-cluster/xxxxxxxxxxxxxxxx
           ContainerPort: !Ref ContainerPort
           ContainerName: JFROG_CONT

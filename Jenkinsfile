@@ -1,8 +1,4 @@
-node()
-agent{
-    label 'ec2-general-worker-node'
-}
- {
+node() {
         stage("POLL SCM") {
                 git credentialsId: 'gitlab', url: 'https://github.com/nns15899/CF_ECS_FARGATE_Jenkins.git'
         }

@@ -48,7 +48,7 @@ Resources:
   taskdefinition:
     Type: 'AWS::ECS::TaskDefinition'
     Properties:
-      ExecutionRoleArn: 'arn:aws:iam::xxxxxxxxxxxx:role/ecsTaskExecutionRole'
+      ExecutionRoleArn: 'arn:aws:iam::101000260731:user/DevSecOps_ecr_user'
       ContainerDefinitions:
         - LogConfiguration:
             LogDriver: awslogs

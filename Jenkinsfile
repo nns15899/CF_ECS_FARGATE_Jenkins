@@ -3,7 +3,7 @@ node() {
                 git credentialsId: 'gitlab', url: 'https://github.com/nns15899/CF_ECS_FARGATE_Jenkins.git'
         }
 	stage("CF Lintingi and Json Validation"){
-	    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'ECS_FARGATE', secretKeyVariable: 'ACCESS_KEY']]) {
+	    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
     		docker.withTool('myDocker') {
 		    //Buidling a docker images based on the dockerfile
                 sh "systemctl start docker"
@@ -18,7 +18,7 @@ node() {
 	}
        stage("ECS Fargate CF Trigger") {
 	    // Using the AWS credentials which are stored in Jenkins
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'ECS_FARGATE', secretKeyVariable: 'ACCESS_KEY']]) {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
                 //Using Docker tool configured in Jenkins
                	docker.withTool('myDocker') {
                 	sh "docker build -t awscli ."

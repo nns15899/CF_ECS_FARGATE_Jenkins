@@ -1,11 +1,22 @@
-node() {
+pipeline{
+    agent {
+        label 'ec2-general-worker-node'
+    }
+    stages{
+
+    
         stage("POLL SCM") {
+            steps{
                 git credentialsId: 'gitlab', url: 'https://github.com/nns15899/CF_ECS_FARGATE_Jenkins.git'
+            }
+                
         }
-	stage("CF Lintingi and Json Validation"){
-	    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
-    		docker.withTool('myDocker') {
-		    //Buidling a docker images based on the dockerfile
+	    stage("CF Lintingi and Json Validation"){
+            steps{
+
+	            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
+    		    docker.withTool('myDocker') {
+		        //Buidling a docker images based on the dockerfile
                 
     		    sh "docker build -t awscli ."
                     //Validating the CF template with cfn-lint and container will be created & validate
@@ -13,10 +24,13 @@ node() {
                     //Validating the Parameter JSON file with Pyton json.tool module
     		    sh "python -m json.tool parameters.json"
     		    sh "docker rmi awscli"
-    		}
+    		    }
+	            }       
+            }
+
 	    }
-	}
        stage("ECS Fargate CF Trigger") {
+           steps{
 	    // Using the AWS credentials which are stored in Jenkins
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
                 //Using Docker tool configured in Jenkins
@@ -29,5 +43,8 @@ node() {
                         sh "docker rmi awscli"
                }
             }
+           }
+
         }
     }
+}

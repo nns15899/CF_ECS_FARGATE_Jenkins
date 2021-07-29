@@ -1,36 +1,26 @@
-pipeline{
-    agent {
-        label 'ec2-general-worker-node'
-    }
-    stages{
-
-    
+node()
+agent{
+    label 'ec2-general-worker-node'
+}
+ {
         stage("POLL SCM") {
-            steps{
                 git credentialsId: 'gitlab', url: 'https://github.com/nns15899/CF_ECS_FARGATE_Jenkins.git'
-            }
-                
         }
-	    stage("CF Lintingi and Json Validation"){
-            steps{
-
-	            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
-    		    docker.withTool('myDocker') {
-		        //Buidling a docker images based on the dockerfile
-                
+	stage("CF Lintingi and Json Validation"){
+	    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
+    		docker.withTool('myDocker') {
+		    //Buidling a docker images based on the dockerfile
+                sh "systemctl start docker"
     		    sh "docker build -t awscli ."
                     //Validating the CF template with cfn-lint and container will be created & validate
     		    sh "docker run --rm awscli cfn-lint New_ECS_Fargate_Para.yml"
                     //Validating the Parameter JSON file with Pyton json.tool module
     		    sh "python -m json.tool parameters.json"
     		    sh "docker rmi awscli"
-    		    }
-	            }       
-            }
-
+    		}
 	    }
+	}
        stage("ECS Fargate CF Trigger") {
-           steps{
 	    // Using the AWS credentials which are stored in Jenkins
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'ACCESS_ID', credentialsId: 'DevXInternalDeployment', secretKeyVariable: 'ACCESS_KEY']]) {
                 //Using Docker tool configured in Jenkins
@@ -43,8 +33,5 @@ pipeline{
                         sh "docker rmi awscli"
                }
             }
-           }
-
         }
     }
-}
